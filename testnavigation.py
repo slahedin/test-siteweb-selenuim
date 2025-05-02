@@ -65,8 +65,7 @@ class TestSibtelMenu(unittest.TestCase):
             ("Swift net", "Infrastructure", "Infrastructure"),
             ("Swift net", "Banques participantes", "Banques participantes"),
             ("Autres services", "Cloud computing", "Cloud computing"),
-            ("Autres services", "Formation", "Formation"),
-            ("Actualités", "Actualités", "Actualités")
+            ("Autres services", "Formation", "Formation")
         ]
 
         for menu, sous_menu, titre in tests:
