@@ -40,11 +40,11 @@ class TestSibtelMenu(unittest.TestCase):
                 EC.element_to_be_clickable((By.XPATH, f"//a[contains(text(), '{sous_menu_texte}')]"))
             )
             lien.click()
-            print(f"✅ Lien '{sous_menu_texte}' cliqué avec succès.")
+            print(f"[ok] Lien '{sous_menu_texte}' cliqué avec succès.")
             time.sleep(2)
 
             self.assertIn(titre_attendu, driver.title)
-            print(f"✅ La page '{titre_attendu}' est bien affichée.")
+            print(f"[ok] La page '{titre_attendu}' est bien affichée.")
 
         # Liste des menus à tester
         tests = [
