@@ -24,7 +24,7 @@ class TestSibtelMenu(unittest.TestCase):
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
 
-    def test_menu_messages_et_carte_identite(self):
+    def test_navigation_page_web(self):
         driver = self.driver
         driver.get("https://www.sibtel.com.tn")
         time.sleep(2)
