@@ -1,0 +1,9 @@
+# Ignore fichiers sensibles et environnements
+.env
+*.pyc
+__pycache__/
+venv/
+*.log
+
+# Fichiers de test
+/tests/*.txt
