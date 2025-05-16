@@ -1,5 +1,7 @@
 import unittest
 import time
+import os
+import glob
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -50,9 +52,19 @@ class TestSibtelMenu(unittest.TestCase):
         print("Le bouton Upload est cliqué avec succès.")
         time.sleep(5)
 
+        # Déterminer automatiquement le seul fichier .txt dans le dossier
+        folder_path = r"C:\Users\Admin\Desktop\selenuim_tests\test"
+        txt_files = glob.glob(os.path.join(folder_path, "*.txt"))
+
+        if not txt_files:
+            raise FileNotFoundError("Aucun fichier .txt trouvé dans le dossier.")
+
+        file_path = txt_files[0]  # Puisqu’il y en a toujours un seul
+        print(f"Fichier détecté : {file_path}")
+
         # Upload du fichier
         file_input = wait.until(EC.presence_of_element_located((By.ID, "file_to_upload")))
-        file_input.send_keys("C:\\Users\\Admin\\Desktop\\selenuim_tests\\test\\EXPWEB_20250515.txt")
+        file_input.send_keys(file_path)
 
         # Attendre que le bouton soit présent
         upload_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "button.upload-button")))
