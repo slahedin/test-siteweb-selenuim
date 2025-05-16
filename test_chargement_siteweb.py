@@ -9,13 +9,13 @@ from selenium.webdriver.support import expected_conditions as EC
 import HtmlTestRunner
 
 
-
 class TestSibtelMenu(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
+        self.uploaded_file_path = None  # On initialise le chemin ici
 
     def test_chargement_site_web(self):
         driver = self.driver
@@ -54,8 +54,9 @@ class TestSibtelMenu(unittest.TestCase):
         # Détection du fichier .txt
         folder_path = r"C:\Users\Admin\Desktop\selenuim_tests\test"
         txt_files = glob.glob(os.path.join(folder_path, "*.txt"))
-        self.assertTrue(txt_files, " X Aucun fichier .txt trouvé dans le dossier.")
+        self.assertTrue(txt_files, " ! Aucun fichier .txt trouvé dans le dossier.")
         file_path = txt_files[0]
+        self.uploaded_file_path = file_path  # Stockage du chemin pour suppression future
         print(f" OK Fichier détecté : {file_path}")
 
         # Upload
@@ -77,6 +78,16 @@ class TestSibtelMenu(unittest.TestCase):
 
     def tearDown(self):
         self.driver.quit()
+
+        # Suppression du fichier uploadé
+        if self.uploaded_file_path and os.path.exists(self.uploaded_file_path):
+            try:
+                os.remove(self.uploaded_file_path)
+                print(f" Fichier supprimé : {self.uploaded_file_path}")
+            except Exception as e:
+                print(f"! Erreur lors de la suppression du fichier : {e}")
+        else:
+            print("! Aucun fichier à supprimer ou déjà supprimé.")
 
 
 if __name__ == "__main__":
