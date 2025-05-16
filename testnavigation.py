@@ -1,5 +1,7 @@
 import unittest
 import time
+import os
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -8,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import HtmlTestRunner  # Assure-toi que 'html-testRunner' est bien installé via pip
 
 class TestSibtelMenu(unittest.TestCase):
 
@@ -46,7 +49,7 @@ class TestSibtelMenu(unittest.TestCase):
             self.assertIn(titre_attendu, driver.title)
             print(f"[ok] La page '{titre_attendu}' est bien affichée.")
 
-        # Liste des menus à tester
+        # Liste des tests à exécuter
         tests = [
             ("A propos de sibtel", "Messages", "Messages"),
             ("A propos de sibtel", "Valeurs", "Valeurs"),
@@ -75,4 +78,18 @@ class TestSibtelMenu(unittest.TestCase):
         self.driver.quit()
 
 if __name__ == "__main__":
-    unittest.main()
+    # Dossier de sortie pour les rapports
+    report_dir = os.path.join(os.getcwd(), "reports")
+    os.makedirs(report_dir, exist_ok=True)
+
+    # Nom du fichier rapport dynamique
+    now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+    unittest.main(
+        testRunner=HtmlTestRunner.HTMLTestRunner(
+            output=report_dir,
+            report_name=f"Sibtel_Test_Report_{now}",
+            report_title="Rapport de test SIBTEL Navigation",
+            descriptions=True
+        )
+    )
