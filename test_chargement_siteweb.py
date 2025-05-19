@@ -21,12 +21,14 @@ class TestSibtelMenu(unittest.TestCase):
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--window-size=1920,1080")
-        chrome_options.add_argument("--headless=new")  # Important pour Jenkins
+        # Décommente si nécessaire :
+        # chrome_options.add_argument("--headless")
+        chrome_options.add_argument("window-size=1920,1080")  # Assure une résolution correcte en mode headless
 
         self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.implicitly_wait(10)
         self.uploaded_file_path = None
+
         print(f"[INFO] Utilisateur en cours : {getpass.getuser()}")
 
     def test_chargement_site_web(self):
@@ -34,28 +36,36 @@ class TestSibtelMenu(unittest.TestCase):
         wait = WebDriverWait(driver, 20)
 
         try:
+            # Accès au site
             driver.get("https://www.sibtel.com.tn")
             time.sleep(4)
 
-            # Connexion
+            # Clic sur "Connexion"
             bouton_connexion = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//span[@class='icon-home-button' and contains(text(), 'Connexion')]")
             ))
+
+            # Scroll jusqu'au bouton et cliquer avec JavaScript
+            driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", bouton_connexion)
+            time.sleep(1)
             driver.execute_script("arguments[0].click();", bouton_connexion)
             print(" Bouton 'Connexion' cliqué.")
             time.sleep(2)
 
+            # Login
             driver.find_element(By.ID, "formEmail").send_keys("slaheddine.chaabani@sibtel.com.tn")
             driver.find_element(By.ID, "password").send_keys("Sibtel@20112023+")
 
             bouton_connexion = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//span[@class='txt' and text()='Connexion']/..")
             ))
+            driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", bouton_connexion)
+            time.sleep(1)
             driver.execute_script("arguments[0].click();", bouton_connexion)
             print(" Connexion effectuée.")
             time.sleep(4)
 
-            # Upload Swift
+            # Menu "Upload Swift"
             upload_swift_link = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//li[@id='74']//a[contains(text(), 'Upload Swift')]")
             ))
@@ -65,6 +75,7 @@ class TestSibtelMenu(unittest.TestCase):
             print(" Menu 'Upload Swift' ouvert.")
             time.sleep(4)
 
+            # Chercher le fichier .txt
             folder_path = r"C:\Users\Admin\Desktop\selenuim_tests\test"
             txt_files = glob.glob(os.path.join(folder_path, "*.txt"))
             self.assertTrue(txt_files, " Aucun fichier .txt trouvé.")
@@ -72,16 +83,18 @@ class TestSibtelMenu(unittest.TestCase):
             self.uploaded_file_path = file_path
             print(f" Fichier détecté : {file_path}")
 
+            # Upload fichier
             file_input = wait.until(EC.presence_of_element_located((By.ID, "file_to_upload")))
             file_input.send_keys(file_path)
 
             upload_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.upload-button")))
-            driver.execute_script("arguments[0].scrollIntoView(true);", upload_button)
-            time.sleep(2)
+            driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", upload_button)
+            time.sleep(1)
             driver.execute_script("arguments[0].click();", upload_button)
             print(" Fichier uploadé avec succès.")
             time.sleep(4)
 
+            # Déconnexion
             logout_form = wait.until(EC.presence_of_element_located((By.ID, "logout-form")))
             driver.execute_script("arguments[0].submit();", logout_form)
             print(" Déconnexion réussie.")
@@ -104,7 +117,6 @@ class TestSibtelMenu(unittest.TestCase):
                 print(f" Erreur suppression fichier : {e}")
         else:
             print(" Aucun fichier à supprimer ou déjà supprimé.")
-
 
 if __name__ == "__main__":
     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
