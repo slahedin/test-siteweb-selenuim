@@ -33,8 +33,8 @@ class TestSibtelMenu(unittest.TestCase):
         print(" OK Bouton 'Connexion' cliqué.")
         time.sleep(3)
 
-        driver.find_element(By.ID, "formEmail").send_keys("")
-        driver.find_element(By.ID, "password").send_keys("")
+        driver.find_element(By.ID, "formEmail").send_keys("slaheddine.chaabani@sibtel.com.tn")
+        driver.find_element(By.ID, "password").send_keys("Sibtel@20112023+")
 
         bouton_connexion = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//span[@class='txt' and text()='Connexion']/..")
