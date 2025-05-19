@@ -1,4 +1,3 @@
-
 import unittest
 import time
 import os
@@ -16,17 +15,23 @@ class TestSibtelMenu(unittest.TestCase):
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
-        self.uploaded_file_path = None  # On initialise le chemin ici
+        self.uploaded_file_path = None
+
+        # Récupération des identifiants via les variables d'environnement
+        self.login_email = os.environ.get("SIBTEL_LOGIN")
+        self.login_password = os.environ.get("SIBTEL_PASSWORD")
+
+        if not self.login_email or not self.login_password:
+            raise Exception("Les variables d'environnement SIBTEL_LOGIN et SIBTEL_PASSWORD ne sont pas définies.")
 
     def test_chargement_site_web(self):
         driver = self.driver
         wait = WebDriverWait(driver, 20)
 
-        # Accéder au site
+        # Accès au site
         driver.get("https://www.sibtel.com.tn")
         time.sleep(4)
 
-        # Connexion
         bouton_connexion = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//span[@class='icon-home-button' and contains(text(), 'Connexion')]")
         ))
@@ -34,8 +39,8 @@ class TestSibtelMenu(unittest.TestCase):
         print(" OK Bouton 'Connexion' cliqué.")
         time.sleep(3)
 
-        driver.find_element(By.ID, "formEmail").send_keys("slaheddine.chaabani@sibtel.com.tn")
-        driver.find_element(By.ID, "password").send_keys("Sibtel@20112023+")
+        driver.find_element(By.ID, "formEmail").send_keys(self.login_email)
+        driver.find_element(By.ID, "password").send_keys(self.login_password)
 
         bouton_connexion = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//span[@class='txt' and text()='Connexion']/..")
@@ -44,7 +49,6 @@ class TestSibtelMenu(unittest.TestCase):
         print(" OK Connexion effectuée.")
         time.sleep(5)
 
-        # Upload Swift
         upload_swift_link = driver.find_element(By.XPATH, "//li[@id='74']//a[contains(text(), 'Upload Swift')]")
         driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", upload_swift_link)
         time.sleep(5)
@@ -52,15 +56,13 @@ class TestSibtelMenu(unittest.TestCase):
         print("OK Menu 'Upload Swift' ouvert.")
         time.sleep(5)
 
-        # Détection du fichier .txt
         folder_path = r"C:\Users\Admin\Desktop\selenuim_tests\test"
         txt_files = glob.glob(os.path.join(folder_path, "*.txt"))
         self.assertTrue(txt_files, " ! Aucun fichier .txt trouvé dans le dossier.")
         file_path = txt_files[0]
-        self.uploaded_file_path = file_path  # Stockage du chemin pour suppression future
+        self.uploaded_file_path = file_path
         print(f" OK Fichier détecté : {file_path}")
 
-        # Upload
         file_input = wait.until(EC.presence_of_element_located((By.ID, "file_to_upload")))
         file_input.send_keys(file_path)
 
@@ -71,7 +73,6 @@ class TestSibtelMenu(unittest.TestCase):
         print(" OK Fichier uploadé avec succès.")
         time.sleep(5)
 
-        # Déconnexion
         logout_form = driver.find_element(By.ID, "logout-form")
         driver.execute_script("arguments[0].submit();", logout_form)
         print(" OK Déconnexion réussie.")
@@ -79,8 +80,6 @@ class TestSibtelMenu(unittest.TestCase):
 
     def tearDown(self):
         self.driver.quit()
-
-        # Suppression du fichier uploadé
         if self.uploaded_file_path and os.path.exists(self.uploaded_file_path):
             try:
                 os.remove(self.uploaded_file_path)
