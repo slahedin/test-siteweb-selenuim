@@ -1,4 +1,3 @@
-
 import unittest
 import time
 import os
@@ -9,7 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import HtmlTestRunner
 
-
 class TestSibtelMenu(unittest.TestCase):
 
     def setUp(self):
@@ -17,6 +15,13 @@ class TestSibtelMenu(unittest.TestCase):
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
         self.uploaded_file_path = None  # On initialise le chemin ici
+
+        # Récupération des identifiants via les variables d'environnement
+        self.login_email = os.environ.get("SIBTEL_LOGIN")
+        self.login_password = os.environ.get("SIBTEL_PASSWORD")
+
+        if not self.login_email or not self.login_password:
+            raise Exception("Les variables d'environnement SIBTEL_LOGIN et SIBTEL_PASSWORD ne sont pas définies.")
 
     def test_chargement_site_web(self):
         driver = self.driver
@@ -34,8 +39,8 @@ class TestSibtelMenu(unittest.TestCase):
         print(" OK Bouton 'Connexion' cliqué.")
         time.sleep(3)
 
-        driver.find_element(By.ID, "formEmail").send_keys("slaheddine.chaabani@sibtel.com.tn")
-        driver.find_element(By.ID, "password").send_keys("Sibtel@20112023+")
+        driver.find_element(By.ID, "formEmail").send_keys(self.login_email)
+        driver.find_element(By.ID, "password").send_keys(self.login_password)
 
         bouton_connexion = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//span[@class='txt' and text()='Connexion']/..")
@@ -89,7 +94,6 @@ class TestSibtelMenu(unittest.TestCase):
                 print(f"! Erreur lors de la suppression du fichier : {e}")
         else:
             print("! Aucun fichier à supprimer ou déjà supprimé.")
-
 
 if __name__ == "__main__":
     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
