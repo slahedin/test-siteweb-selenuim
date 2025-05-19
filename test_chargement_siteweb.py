@@ -21,13 +21,12 @@ class TestSibtelMenu(unittest.TestCase):
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        # Décommente si nécessaire :
-        # chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--window-size=1920,1080")
+        chrome_options.add_argument("--headless=new")  # Important pour Jenkins
 
         self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.implicitly_wait(10)
         self.uploaded_file_path = None
-
         print(f"[INFO] Utilisateur en cours : {getpass.getuser()}")
 
     def test_chargement_site_web(self):
@@ -35,11 +34,10 @@ class TestSibtelMenu(unittest.TestCase):
         wait = WebDriverWait(driver, 20)
 
         try:
-            # Accès au site
             driver.get("https://www.sibtel.com.tn")
             time.sleep(4)
 
-            # Clic sur "Connexion"
+            # Connexion
             bouton_connexion = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//span[@class='icon-home-button' and contains(text(), 'Connexion')]")
             ))
@@ -47,7 +45,6 @@ class TestSibtelMenu(unittest.TestCase):
             print(" Bouton 'Connexion' cliqué.")
             time.sleep(2)
 
-            # Login
             driver.find_element(By.ID, "formEmail").send_keys("slaheddine.chaabani@sibtel.com.tn")
             driver.find_element(By.ID, "password").send_keys("Sibtel@20112023+")
 
@@ -58,7 +55,7 @@ class TestSibtelMenu(unittest.TestCase):
             print(" Connexion effectuée.")
             time.sleep(4)
 
-            # Menu "Upload Swift"
+            # Upload Swift
             upload_swift_link = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//li[@id='74']//a[contains(text(), 'Upload Swift')]")
             ))
@@ -68,7 +65,6 @@ class TestSibtelMenu(unittest.TestCase):
             print(" Menu 'Upload Swift' ouvert.")
             time.sleep(4)
 
-            # Chercher le fichier .txt
             folder_path = r"C:\Users\Admin\Desktop\selenuim_tests\test"
             txt_files = glob.glob(os.path.join(folder_path, "*.txt"))
             self.assertTrue(txt_files, " Aucun fichier .txt trouvé.")
@@ -76,7 +72,6 @@ class TestSibtelMenu(unittest.TestCase):
             self.uploaded_file_path = file_path
             print(f" Fichier détecté : {file_path}")
 
-            # Upload fichier
             file_input = wait.until(EC.presence_of_element_located((By.ID, "file_to_upload")))
             file_input.send_keys(file_path)
 
@@ -87,7 +82,6 @@ class TestSibtelMenu(unittest.TestCase):
             print(" Fichier uploadé avec succès.")
             time.sleep(4)
 
-            # Déconnexion
             logout_form = wait.until(EC.presence_of_element_located((By.ID, "logout-form")))
             driver.execute_script("arguments[0].submit();", logout_form)
             print(" Déconnexion réussie.")
