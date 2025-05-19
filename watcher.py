@@ -13,7 +13,7 @@ if txt_files:
     print("[INFO] Lancement du test Selenium...")
 
     # Lancer le script principal (attention au chemin selon Jenkins)
-    subprocess.run(["python", "C:\Users\Admin\Desktop\selenuim_tests\test_chargement_siteweb.py"])
+    subprocess.run(["python", "C:\\Users\\Admin\\Desktop\\selenuim_tests\\test\\test_chargement_siteweb.py"])
 
 else:
     print("[INFO] Aucun fichier .txt trouvé.")
